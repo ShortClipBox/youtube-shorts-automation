@@ -3,7 +3,7 @@ import google.oauth2.credentials
 import google_auth_oauthlib.flow
 from google.auth.transport.requests import Request
 
-import config
+from . import config
 
 # The scopes required for the YouTube Data API
 SCOPES = ['https://www.googleapis.com/auth/youtube.upload', 'https://www.googleapis.com/auth/youtube.readonly']

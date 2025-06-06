@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "youtube-shorts-automation"
+version = "0.1.0"
+description = "YouTube Shorts Automation Project"
+requires-python = ">=3.9"
+dependencies = [
+    "google-api-python-client",
+    "google-auth-oauthlib",
+    "requests",
+    "python-dotenv",
+]
+
+[tool.setuptools]
+packages = ["src"] 

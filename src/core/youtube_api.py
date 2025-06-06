@@ -1,8 +1,8 @@
 import googleapiclient.discovery
 import googleapiclient.errors
 
-import config
-import auth
+from . import config
+from . import auth
 
 class YouTubeAPI:
     """A wrapper class for the YouTube Data API v3."""

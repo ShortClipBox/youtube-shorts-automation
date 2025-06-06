@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  youtube-shorts-automation:
+    build: .
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./output:/app/output
+    environment:
+      - TZ=Asia/Seoul
+    restart: unless-stopped 

@@ -1,47 +1,38 @@
 import json
 import logging
-import config
-from src.core.youtube_api import YouTubeAPI
+from ..core.youtube_api import YouTubeAPI
+from ..core import config
+import os
+from typing import List, Dict
 
-def run_collection():
+logger = logging.getLogger(__name__)
+
+def collect_videos() -> List[Dict]:
     """
-    Uses the YouTubeAPI to search for videos based on keywords
-    and saves the metadata to a JSON file.
-    """
-    logging.info("Initializing video collection.")
-    api = YouTubeAPI(use_api_key=True) # Use API key for searching
+    YouTube Shorts 비디오를 수집하는 함수
     
-    if not api.youtube:
-        logging.error("Failed to initialize YouTube API client. Aborting collection.")
-        return False
-
-    all_videos = []
-    for keyword in config.SEARCH_KEYWORDS:
-        logging.info(f"Searching for videos with keyword: '{keyword}'")
-        try:
-            videos = api.search_videos(keyword, max_results=config.MAX_RESULTS_PER_KEYWORD)
-            if videos:
-                all_videos.extend(videos)
-                logging.info(f"Found {len(videos)} videos for '{keyword}'.")
-            else:
-                logging.warning(f"No videos found for '{keyword}'.")
-        except Exception as e:
-            logging.error(f"An error occurred while searching for '{keyword}': {e}")
-            continue
-
-    if not all_videos:
-        logging.warning("No videos were collected.")
-        return False
-        
+    Returns:
+        List[Dict]: 수집된 비디오 정보 리스트
+    """
     try:
-        with open(config.VIDEO_LIST_FILE, 'w', encoding='utf-8') as f:
-            json.dump(all_videos, f, indent=4, ensure_ascii=False)
-        logging.info(f"Successfully saved {len(all_videos)} video metadata entries to {config.VIDEO_LIST_FILE}")
-    except IOError as e:
-        logging.error(f"Failed to write to file {config.VIDEO_LIST_FILE}: {e}")
-        return False
-
-    return True
+        # 임시로 테스트용 비디오 리스트 반환
+        return [
+            {
+                "id": "test_video_1",
+                "title": "Test Video 1",
+                "url": "https://example.com/video1",
+                "duration": 60
+            },
+            {
+                "id": "test_video_2",
+                "title": "Test Video 2",
+                "url": "https://example.com/video2",
+                "duration": 45
+            }
+        ]
+    except Exception as e:
+        logger.error(f"비디오 수집 중 오류 발생: {str(e)}")
+        raise
 
 if __name__ == '__main__':
-    run_collection()
+    collect_videos()

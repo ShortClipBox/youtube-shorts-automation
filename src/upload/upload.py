@@ -1,8 +1,8 @@
 import os
 import json
 import logging
-import config
-from src.core.youtube_api import YouTubeAPI
+from ..core import config
+from ..core.youtube_api import YouTubeAPI
 
 def run_upload():
     """
