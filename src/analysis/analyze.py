@@ -69,5 +69,37 @@ def run_analysis():
         
     return True
 
+def analyze_performance(video_id: str, metrics: dict) -> dict:
+    try:
+        performance = {
+            'video_id': video_id,
+            'views': metrics.get('views', 0),
+            'likes': metrics.get('likes', 0),
+            'comments': metrics.get('comments', 0),
+            'engagement_rate': 0.0,
+            'performance_score': 0.0
+        }
+        
+        if performance['views'] > 0:
+            performance['engagement_rate'] = (
+                (performance['likes'] + performance['comments']) / 
+                performance['views']
+            ) * 100
+            
+        performance['performance_score'] = min(
+            (performance['engagement_rate'] * 0.7 + 
+             (performance['views'] / 1000) * 0.3),
+            100
+        )
+        
+        return performance
+        
+    except Exception as e:
+        logger.error(f"성능 분석 중 오류 발생: {str(e)}")
+        return {
+            'video_id': video_id,
+            'error': str(e)
+        }
+
 if __name__ == '__main__':
     run_analysis()

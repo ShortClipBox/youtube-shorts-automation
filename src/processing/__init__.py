@@ -1,3 +1,3 @@
-from .process import run_processing
+from .process import VideoProcessor
 
-__all__ = ['run_processing']
+__all__ = ['VideoProcessor']

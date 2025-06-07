@@ -9,4 +9,8 @@ services:
       - ./output:/app/output
     environment:
       - TZ=Asia/Seoul
+      - REDIRECT_URI=https://youtube-shorts-automation-381688299677.asia-northeast3.run.app/auth/callback
+      - YOUTUBE_CLIENT_ID=${YOUTUBE_CLIENT_ID}
+      - YOUTUBE_CLIENT_SECRET=${YOUTUBE_CLIENT_SECRET}
+      - YOUTUBE_API_KEY=${YOUTUBE_API_KEY}
     restart: unless-stopped 

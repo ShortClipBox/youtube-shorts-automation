@@ -36,7 +36,7 @@ def main_pipeline():
 
         # Step 3: Upload videos
         logging.info(">>> [PHASE 3/4] Starting video upload...")
-        upload_success = run_upload()
+        upload_success = run_upload(processed_videos)
         if not upload_success:
             logging.error("Video upload failed. Aborting pipeline.")
             return

@@ -8,4 +8,3 @@ Requires-Dist: google-api-python-client
 Requires-Dist: google-auth-oauthlib
 Requires-Dist: requests
 Requires-Dist: python-dotenv
-Dynamic: license-file

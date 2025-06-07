@@ -1,15 +1,22 @@
 #!/bin/bash
 
 # 환경 변수 설정
-PROJECT_ID="shortclipbox"  # GCP 프로젝트 ID
-REGION="asia-northeast3"      # 서울 리전
+PROJECT_ID="shortclipbox"
 SERVICE_NAME="youtube-shorts-automation"
-SCHEDULE="0 */6 * * *"       # 6시간마다 실행
+REGION="us-central1"
+JOB_NAME="run-youtube-shorts-automation"
+SCHEDULE="0 0 * * *" # 매일 자정 실행
 
 # Cloud Scheduler 작업 생성
-gcloud scheduler jobs create http youtube-shorts-automation-job \
-  --schedule="$SCHEDULE" \
-  --uri="https://$REGION-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/$PROJECT_ID/services/$SERVICE_NAME:run" \
+echo "Creating Cloud Scheduler job ${JOB_NAME}..."
+gcloud scheduler jobs create http ${JOB_NAME} \
+  --project=${PROJECT_ID} \
+  --location=${REGION} \
+  --schedule="${SCHEDULE}" \
+  --uri="https://${SERVICE_NAME}-381688299677.${REGION}.run.app" \
   --http-method=POST \
-  --oauth-service-account-email="$PROJECT_ID@appspot.gserviceaccount.com" \
-  --oauth-token-scope="https://www.googleapis.com/auth/cloud-platform" 
+  --message-body='{}' \
+  --time-zone="Asia/Seoul" \
+  --oidc-service-account-email="381688299677-compute@developer.gserviceaccount.com"
+
+echo "Cloud Scheduler job ${JOB_NAME} created." 

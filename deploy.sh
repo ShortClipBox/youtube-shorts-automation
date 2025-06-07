@@ -1,22 +1,24 @@
 #!/bin/bash
 
 # 환경 변수 설정
-PROJECT_ID="shortclipbox"  # GCP 프로젝트 ID
-REGION="asia-northeast3"      # 서울 리전
+PROJECT_ID="shortclipbox"
 SERVICE_NAME="youtube-shorts-automation"
-
-# Docker 이미지 빌드
-docker build -t gcr.io/$PROJECT_ID/$SERVICE_NAME .
-
-# GCR에 이미지 푸시
-docker push gcr.io/$PROJECT_ID/$SERVICE_NAME
+IMAGE_NAME="us-central1-docker.pkg.dev/${PROJECT_ID}/${SERVICE_NAME}/app:latest"
+REGION="us-central1"
 
 # Cloud Run 서비스 배포
-gcloud run deploy $SERVICE_NAME \
-  --image gcr.io/$PROJECT_ID/$SERVICE_NAME \
+echo "Deploying Cloud Run service ${SERVICE_NAME} to region ${REGION}..."
+gcloud run deploy ${SERVICE_NAME} \
+  --image ${IMAGE_NAME} \
   --platform managed \
-  --region $REGION \
+  --region ${REGION} \
   --allow-unauthenticated \
+  --cpu 1 \
   --memory 512Mi \
-  --timeout 3600 \
-  --set-env-vars="YOUTUBE_API_KEY=your-api-key"  # YouTube API 키 설정 
+  --min-instances 0 \
+  --max-instances 1 \
+  --timeout 300 \
+  --project ${PROJECT_ID} \
+  --quiet
+
+echo "Cloud Run service deployed." 

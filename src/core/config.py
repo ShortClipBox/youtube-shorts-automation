@@ -20,8 +20,8 @@ SHORT_DURATION = 59
 OUTPUT_RESOLUTION = (1080, 1920) # (width, height)
 
 # --- File & Directory Paths ---
-# Base directory
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Base directory (project root)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Data paths
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -56,3 +56,13 @@ UPLOAD_DEFAULTS = {
     "tags": ["shorts", "funny", "trending"],
     "description": "Check out this cool YouTube Short! #shorts"
 }
+
+# YouTube API 스코프 정의
+SCOPES = [
+    'https://www.googleapis.com/auth/youtube.upload',
+    'https://www.googleapis.com/auth/youtube.readonly'
+]
+
+# YouTube API 설정
+YOUTUBE_API_SERVICE_NAME = 'youtube'
+YOUTUBE_API_VERSION = 'v3'

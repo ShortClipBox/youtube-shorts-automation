@@ -1,63 +1,49 @@
 import os
-import google.oauth2.credentials
-import google_auth_oauthlib.flow
-from google.auth.transport.requests import Request
+import sys
+from pathlib import Path
 
-from . import config
+# 프로젝트 루트 경로를 PYTHONPATH에 추가
+project_root = str(Path(__file__).parent.parent.parent)
+if project_root not in sys.path:
+    sys.path.append(project_root)
+
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+from src.core import config
 
 # The scopes required for the YouTube Data API
 SCOPES = ['https://www.googleapis.com/auth/youtube.upload', 'https://www.googleapis.com/auth/youtube.readonly']
 
 def get_credentials():
-    """
-    Handles Google API authentication flow.
-    If credentials exist and are valid, returns them.
-    Otherwise, initiates the OAuth2 flow to get new credentials.
-    """
     creds = None
-    # The file credentials.json stores the user's access and refresh tokens.
-    if os.path.exists(config.CREDENTIALS_FILE):
-        creds = google.oauth2.credentials.Credentials.from_authorized_user_file(config.CREDENTIALS_FILE, SCOPES)
+    if os.path.exists('token.json'):
+        creds = Credentials.from_authorized_user_file('token.json', config.SCOPES)
     
-    # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
-            try:
-                creds.refresh(Request())
-            except Exception as e:
-                print(f"Failed to refresh token: {e}")
-                run_auth_flow()
+            creds.refresh(Request())
         else:
-            run_auth_flow()
-
-        # Reload credentials after flow
-        if os.path.exists(config.CREDENTIALS_FILE):
-             creds = google.oauth2.credentials.Credentials.from_authorized_user_file(config.CREDENTIALS_FILE, SCOPES)
+            flow = InstalledAppFlow.from_client_config(
+                {
+                    "installed": {
+                        "client_id": os.getenv("YOUTUBE_CLIENT_ID"),
+                        "client_secret": os.getenv("YOUTUBE_CLIENT_SECRET"),
+                        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                        "token_uri": "https://oauth2.googleapis.com/token",
+                        "redirect_uris": [os.getenv("REDIRECT_URI", "http://localhost")]
+                    }
+                },
+                config.SCOPES
+            )
+            creds = flow.run_local_server(port=0)
+        
+        with open('token.json', 'w') as token:
+            token.write(creds.to_json())
     
     return creds
 
-def run_auth_flow():
-    """Runs the authentication flow to get new credentials."""
-    print("Running authentication flow...")
-    if not os.path.exists(config.CLIENT_SECRETS_FILE):
-        print(f"Error: Client secrets file not found at '{config.CLIENT_SECRETS_FILE}'")
-        print("Please download it from the Google Cloud Console and place it in the 'data' directory.")
-        return
-
-    flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(
-        config.CLIENT_SECRETS_FILE, SCOPES)
-    creds = flow.run_local_server(port=0)
-    
-    # Save the credentials for the next run
-    with open(config.CREDENTIALS_FILE, 'w') as token:
-        token.write(creds.to_json())
-    print(f"Credentials saved to {config.CREDENTIALS_FILE}")
-
-
 if __name__ == '__main__':
-    print("Attempting to authenticate with Google API...")
-    credentials = get_credentials()
-    if credentials:
-        print("Authentication successful.")
-    else:
-        print("Authentication failed. Please check the console for errors.")
+    creds = get_credentials()
+    print("인증이 완료되었습니다!")
+    print(f"리프레시 토큰: {creds.refresh_token}")

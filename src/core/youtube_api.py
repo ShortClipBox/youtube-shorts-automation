@@ -1,34 +1,36 @@
 import googleapiclient.discovery
 import googleapiclient.errors
+from googleapiclient.http import MediaFileUpload
 
+# from . import auth # auth 모듈의 직접적인 의존성을 제거합니다.
 from . import config
-from . import auth
 
 class YouTubeAPI:
     """A wrapper class for the YouTube Data API v3."""
 
-    def __init__(self, use_api_key=False):
+    def __init__(self, credentials=None, developerKey=None):
         """
         Initializes the YouTube API client.
-        :param use_api_key: If True, uses the API key for authentication (limited access).
-                            If False, uses OAuth 2.0 credentials (full access).
+        :param credentials: OAuth 2.0 credentials object.
+        :param developerKey: YouTube Data API Key.
         """
         self.youtube = None
-        if use_api_key:
+        if credentials:
             try:
-                self.youtube = googleapiclient.discovery.build(
-                    "youtube", "v3", developerKey=config.YOUTUBE_API_KEY)
-                print("YouTube API client initialized with API Key.")
-            except Exception as e:
-                print(f"Error initializing with API key: {e}")
-        else:
-            try:
-                credentials = auth.get_credentials()
                 self.youtube = googleapiclient.discovery.build(
                     "youtube", "v3", credentials=credentials)
                 print("YouTube API client initialized with OAuth 2.0 credentials.")
             except Exception as e:
                 print(f"Error initializing with OAuth credentials: {e}")
+        elif developerKey:
+            try:
+                self.youtube = googleapiclient.discovery.build(
+                    "youtube", "v3", developerKey=developerKey)
+                print("YouTube API client initialized with API Key.")
+            except Exception as e:
+                print(f"Error initializing with API key: {e}")
+        else:
+            print("Warning: YouTubeAPI initialized without credentials or API key.")
 
     def search_videos(self, query, max_results=5):
         """
@@ -97,16 +99,15 @@ class YouTubeAPI:
                     "privacyStatus": privacy_status
                 }
             }
+            media_body = MediaFileUpload(file_path, resumable=True)
             request = self.youtube.videos().insert(
                 part=",".join(body.keys()),
                 body=body,
-                media_body=file_path # In a real scenario, use MediaFileUpload
+                media_body=media_body
             )
-            # This is a placeholder. Real upload requires MediaFileUpload from googleapiclient.http
-            print(f"Placeholder: Would upload {file_path} with title '{title}'")
-            # response = request.execute()
-            # return response
-            return {"id": "placeholder_video_id", "snippet": {"title": title}}
+            response = request.execute()
+            print(f"Successfully uploaded '{title}' with ID: {response['id']}")
+            return {"id": response['id'], "snippet": {"title": title}}
         except googleapiclient.errors.HttpError as e:
             print(f"An HTTP error {e.resp.status} occurred: {e.content}")
             return None
