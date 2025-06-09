@@ -15,4 +15,5 @@ dependencies = [
 ]
 
 [tool.setuptools]
-packages = ["src"] 
+package-dir = {"" = "src"}
+packages = ["collection", "core", "upload", "processing", "analysis"] 

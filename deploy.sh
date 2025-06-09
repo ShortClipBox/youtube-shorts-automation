@@ -19,6 +19,8 @@ gcloud run deploy ${SERVICE_NAME} \
   --max-instances 1 \
   --timeout 300 \
   --project ${PROJECT_ID} \
+  --set-env-vars="TZ=Asia/Seoul,REDIRECT_URI=https://youtube-shorts-automation-381688299677.us-central1.run.app/auth/callback" \
+  --set-secrets="YOUTUBE_CLIENT_ID=YOUTUBE_CLIENT_ID:latest,YOUTUBE_CLIENT_SECRET=YOUTUBE_CLIENT_SECRET:latest,YOUTUBE_API_KEY=YOUTUBE_API_KEY:latest" \
   --quiet
 
 echo "Cloud Run service deployed." 

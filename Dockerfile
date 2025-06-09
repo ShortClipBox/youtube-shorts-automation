@@ -26,5 +26,5 @@ ENV PYTHONUNBUFFERED=1
 ENV PORT=8080
 ENV PYTHONPATH=/app
 
-# 실행 명령 (디버그 정보 유지)
-CMD ["python", "-c", "import uvicorn, os; uvicorn.run(\"src.main:app\", host=\"0.0.0.0\", port=int(os.environ.get(\"PORT\", 8080)))"] 
+# 실행 명령
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080"] 
